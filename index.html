@@ -91,39 +91,12 @@
             margin-bottom: 20px;
             font-size: 2em;
         }
-        .success-message {
-            font-size: 2em;
-            color: green;
-            margin-top: 30px;
-        }
-        .tick-icon {
-            color: green;
-            font-size: 3em;
-            margin-right: 10px;
-        }
-        .in-button {
-            background-color: pink;
-        }
-        .out-button {
-            background-color: orange;
-        }
-        .cash-button {
-            background-color: yellow;
-        }
-        .credit-button {
-            background-color: green;
-        }
-        .bank-button {
-            background-color: purple;
-        }
-        /* Specific colors for List and Exit buttons */
-        .list-button {
-            background-color: green;
-            color: white;
-        }
-        .exit-button-view {
-            background-color: red;
-            color: white;
+        .cash-book-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: darkblue;
+            text-align: center;
+            margin-bottom: 20px;
         }
         .transaction-list {
             width: 80%;
@@ -137,6 +110,22 @@
         }
         .transaction-list th {
             background-color: #f2f2f2;
+        }
+        .balance-entry {
+            background-color: #f7f7f7;
+            font-style: italic;
+        }
+        .dr-cr {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            margin-top: 20px;
+        }
+        .dr-cr .side {
+            width: 45%;
+        }
+        .dr-cr table {
+            width: 100%;
         }
     </style>
 </head>
@@ -155,42 +144,29 @@
         <button class="button exit-button" onclick="exitProgram()">Exit</button>
     </div>
 
+    <div id="transaction-form" class="transaction-form" style="display: none;">
+        <h2>Enter Transaction Details</h2>
+        <input type="text" id="transaction-description" class="input-field" placeholder="Enter Description" required>
+        <input type="number" id="transaction-amount" class="input-field" placeholder="Enter Amount" required>
+        <div class="horizontal-buttons">
+            <button class="button submit-button" onclick="chooseInOut('in')">In</button>
+            <button class="button submit-button" onclick="chooseInOut('out')">Out</button>
+        </div>
+        <div id="in-out-choice" style="display: none;">
+            <h3>Choose Payment Method</h3>
+            <button class="button submit-button" onclick="choosePaymentMethod('Cash')">Cash</button>
+            <button class="button submit-button" onclick="choosePaymentMethod('Credit')">Credit</button>
+            <button class="button submit-button" onclick="choosePaymentMethod('Bank')">Bank</button>
+        </div>
+        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+    </div>
+
     <div id="view-transaction-options" class="transaction-form" style="display: none;">
         <h2>Choose an Option</h2>
         <div class="horizontal-buttons">
             <button class="submit-button list-button" onclick="viewTransactionList()">List</button>
-            <button class="submit-button exit-button-view" onclick="goBackToBusinessMenu()">Exit</button>
-        </div>
-    </div>
-
-    <div id="transaction-description-form" class="transaction-form" style="display: none;">
-        <h2>Enter Description</h2>
-        <input class="input-field" type="text" id="transaction-description" placeholder="Enter Description" />
-        <br>
-        <button class="submit-button" onclick="submitDescription()">Submit Description</button>
-    </div>
-
-    <div id="transaction-amount-form" class="transaction-form" style="display: none;">
-        <h2>Enter Amount</h2>
-        <input class="input-field" type="number" id="transaction-amount" placeholder="Enter Amount" />
-        <br>
-        <button class="submit-button" onclick="submitAmount()">Submit Amount</button>
-    </div>
-
-    <div id="transaction-in-out-form" class="transaction-form" style="display: none;">
-        <h2>Choose Transaction Type</h2>
-        <div class="horizontal-buttons">
-            <button class="submit-button in-button" onclick="submitTransactionType('In')">In</button>
-            <button class="submit-button out-button" onclick="submitTransactionType('Out')">Out</button>
-        </div>
-    </div>
-
-    <div id="transaction-method-form" class="transaction-form" style="display: none;">
-        <h2>Choose Payment Method</h2>
-        <div class="horizontal-buttons">
-            <button class="submit-button cash-button" onclick="submitPaymentMethod('Cash')">Cash</button>
-            <button class="submit-button credit-button" onclick="submitPaymentMethod('Credit')">Credit</button>
-            <button class="submit-button bank-button" onclick="submitPaymentMethod('Bank')">Bank</button>
+            <button class="submit-button cashbook-button" onclick="viewCashBook()">CASH BOOK (CB)</button>
+            <button class="submit-button exit-button" onclick="exitProgram()">Exit</button>
         </div>
     </div>
 
@@ -200,8 +176,56 @@
         </div>
     </div>
 
+    <div id="transaction-list" class="transaction-form" style="display: none;">
+        <h2>Transaction List</h2>
+        <table class="transaction-list" id="transactions-table">
+            <tr>
+                <th>No</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Method</th>
+            </tr>
+        </table>
+        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+    </div>
+
+    <div id="cash-book" class="transaction-form" style="display: none;">
+        <div class="cash-book-title">CASH BOOK (CB)</div>
+        <div class="dr-cr">
+            <div class="side" id="dr-side">
+                <h3>Dr (Debit)</h3>
+                <table class="transaction-list" id="dr-table">
+                    <tr>
+                        <th>Date</th>
+                        <th>Detail</th>
+                        <th>Folio</th>
+                        <th>Amount</th>
+                    </tr>
+                </table>
+            </div>
+            <div class="side" id="cr-side">
+                <h3>Cr (Credit)</h3>
+                <table class="transaction-list" id="cr-table">
+                    <tr>
+                        <th>Date</th>
+                        <th>Detail</th>
+                        <th>Folio</th>
+                        <th>Amount</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+    </div>
+
     <script>
-        var transactions = []; // Placeholder for storing transactions
+        var transactions = []; 
+        var folioCounter = 1; 
+        var transactionMethod = '';
+        var transactionType = '';
+        var drTotal = 0, crTotal = 0;
 
         function chooseBusiness() {
             document.getElementById('initial-buttons').style.display = 'none';
@@ -209,12 +233,43 @@
         }
 
         function addTransaction() {
-            // Clear any previous input
-            document.getElementById('transaction-description').value = '';
-            document.getElementById('transaction-amount').value = '';
-
             document.getElementById('business-buttons').style.display = 'none';
-            document.getElementById('transaction-description-form').style.display = 'block';
+            document.getElementById('transaction-form').style.display = 'block';
+        }
+
+        function chooseInOut(type) {
+            transactionType = type;
+            document.getElementById('in-out-choice').style.display = 'block';
+        }
+
+        function choosePaymentMethod(method) {
+            transactionMethod = method;
+            let description = document.getElementById('transaction-description').value;
+            let amount = document.getElementById('transaction-amount').value;
+
+            if (description && amount && transactionType && transactionMethod) {
+                let transaction = {
+                    date: new Date().toLocaleDateString(),
+                    description: description,
+                    amount: parseFloat(amount),
+                    method: transactionMethod,
+                    type: transactionType,
+                    folio: folioCounter
+                };
+
+                transactions.push(transaction);
+                folioCounter++;
+
+                document.getElementById('transaction-form').style.display = 'none';
+                document.getElementById('transaction-success-message').style.display = 'block';
+
+                setTimeout(() => {
+                    document.getElementById('transaction-success-message').style.display = 'none';
+                    document.getElementById('business-buttons').style.display = 'block';
+                }, 2000);
+            } else {
+                alert("Please fill in all fields.");
+            }
         }
 
         function viewTransaction() {
@@ -223,98 +278,99 @@
         }
 
         function viewTransactionList() {
-            // Check if transactions exist
-            if (transactions.length > 0) {
-                let table = "<table class='transaction-list'><tr><th>No</th><th>Date</th><th>Description</th><th>Type</th><th>Amount</th></tr>";
+            document.getElementById('view-transaction-options').style.display = 'none';
+            document.getElementById('transaction-list').style.display = 'block';
 
+            if (transactions.length > 0) {
+                let table = document.getElementById('transactions-table');
                 transactions.forEach((transaction, index) => {
-                    table += `<tr>
+                    let row = `<tr>
                         <td>${index + 1}</td>
                         <td>${transaction.date}</td>
                         <td>${transaction.description}</td>
-                        <td>${transaction.method}</td>
+                        <td>${transaction.type}</td>
                         <td>${transaction.amount}</td>
+                        <td>${transaction.method}</td>
                     </tr>`;
+                    table.innerHTML += row;
                 });
-
-                table += "</table>";
-                document.getElementById('view-transaction-options').innerHTML = table;
             } else {
-                alert("No transactions available.");
+                alert("No transactions recorded.");
             }
         }
 
-        function goBackToBusinessMenu() {
-            // Hide the success message when going back to the business menu
-            document.getElementById('transaction-success-message').style.display = 'none';
+        function viewCashBook() {
             document.getElementById('view-transaction-options').style.display = 'none';
-            document.getElementById('business-buttons').style.display = 'block'; // Return to business menu
-        }
+            document.getElementById('cash-book').style.display = 'block';
 
-        function submitDescription() {
-            var description = document.getElementById('transaction-description').value;
+            let drTable = document.getElementById('dr-table');
+            let crTable = document.getElementById('cr-table');
 
-            if (description) {
-                document.getElementById('transaction-description-form').style.display = 'none';
-                document.getElementById('transaction-amount-form').style.display = 'block';
-            } else {
-                alert("Please enter a description.");
-            }
-        }
+            drTable.innerHTML = "<tr><th>Date</th><th>Detail</th><th>Folio</th><th>Amount</th></tr>";
+            crTable.innerHTML = "<tr><th>Date</th><th>Detail</th><th>Folio</th><th>Amount</th></tr>";
 
-        function submitAmount() {
-            var amount = document.getElementById('transaction-amount').value;
-
-            if (amount) {
-                document.getElementById('transaction-amount-form').style.display = 'none';
-                document.getElementById('transaction-in-out-form').style.display = 'block';
-            } else {
-                alert("Please enter an amount.");
-            }
-        }
-
-        function submitTransactionType(type) {
-            var description = document.getElementById('transaction-description').value;
-            var amount = document.getElementById('transaction-amount').value;
-
-            // Store the transaction details along with the current date
-            transactions.push({
-                description: description,
-                amount: amount,
-                type: type,
-                date: new Date().toLocaleString(), // Add date
-                method: ''
+            transactions.forEach((transaction) => {
+                let row = `<tr><td>${transaction.date}</td><td>${transaction.description}</td><td>${transaction.folio}</td><td>${transaction.amount}</td></tr>`;
+                if (transaction.type === "in") {
+                    drTable.innerHTML += row;
+                    drTotal += transaction.amount;
+                } else if (transaction.type === "out") {
+                    crTable.innerHTML += row;
+                    crTotal += transaction.amount;
+                }
             });
 
-            // Now show the method selection
-            document.getElementById('transaction-in-out-form').style.display = 'none';
-            document.getElementById('transaction-method-form').style.display = 'block';
-        }
+            // Automatically calculate totals and balance
+            let difference = Math.abs(drTotal - crTotal);
 
-        function submitPaymentMethod(method) {
-            var description = document.getElementById('transaction-description').value;
-            var amount = document.getElementById('transaction-amount').value;
+            // Add the difference to the side with the lesser total
+            let balanceRow = `<tr class="balance-entry"><td>${new Date().toLocaleDateString()}</td><td>Balance</td><td>c/d</td><td>${difference}</td></tr>`;
+            
+            if (drTotal < crTotal) {
+                drTotal += difference;
+                document.getElementById('dr-table').innerHTML += balanceRow;
+            } else {
+                crTotal += difference;
+                document.getElementById('cr-table').innerHTML += balanceRow;
+            }
 
-            // Update the method of the transaction
-            transactions[transactions.length - 1].method = method;
+            // Display totals for both sides
+            let drTotalRow = `<tr class="balance-entry"><td>Total</td><td></td><td></td><td>${drTotal}</td></tr>`;
+            let crTotalRow = `<tr class="balance-entry"><td>Total</td><td></td><td></td><td>${crTotal}</td></tr>`;
 
-            // Show success message only after the transaction is completely recorded
-            document.getElementById('transaction-method-form').style.display = 'none';
-            document.getElementById('transaction-success-message').style.display = 'block';
+            document.getElementById('dr-table').innerHTML += drTotalRow;
+            document.getElementById('cr-table').innerHTML += crTotalRow;
 
-            // Clear the input fields after the transaction is complete
-            document.getElementById('transaction-description').value = '';
-            document.getElementById('transaction-amount').value = '';
-
-            // Wait 1 second before returning to the business menu
-            setTimeout(function() {
-                goBackToBusinessMenu();
-            }, 1000); // 1-second delay
+            // Add the balance brought down (b/d) to the side with the larger total
+            let totalRow = `<tr class="balance-entry"><td>${new Date().toLocaleDateString()}</td><td>Balance</td><td>b/d</td><td>${difference}</td></tr>`;
+            if (drTotal > crTotal) {
+                document.getElementById('cr-table').innerHTML += totalRow;
+            } else {
+                document.getElementById('dr-table').innerHTML += totalRow;
+            }
         }
 
         function exitProgram() {
-            alert("Exiting...");
-            window.close(); // Closes the window (works in most browsers)
+            const currentMenu = document.querySelector('div[style="display: block;"]');
+            if (currentMenu.id === "business-buttons") {
+                document.getElementById('business-buttons').style.display = 'none';
+                document.getElementById('initial-buttons').style.display = 'block';
+            } else if (currentMenu.id === "transaction-form") {
+                document.getElementById('transaction-form').style.display = 'none';
+                document.getElementById('business-buttons').style.display = 'block';
+            } else if (currentMenu.id === "view-transaction-options") {
+                document.getElementById('view-transaction-options').style.display = 'none';
+                document.getElementById('business-buttons').style.display = 'block';
+            } else if (currentMenu.id === "transaction-success-message") {
+                document.getElementById('transaction-success-message').style.display = 'none';
+                document.getElementById('business-buttons').style.display = 'block';
+            } else if (currentMenu.id === "transaction-list") {
+                document.getElementById('transaction-list').style.display = 'none';
+                document.getElementById('view-transaction-options').style.display = 'block';
+            } else if (currentMenu.id === "cash-book") {
+                document.getElementById('cash-book').style.display = 'none';
+                document.getElementById('view-transaction-options').style.display = 'block';
+            }
         }
     </script>
 </body>
