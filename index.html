@@ -292,6 +292,10 @@
                 transactions.push(transaction);
                 folioCounter++;
 
+                // Clear the input fields after adding the transaction
+                document.getElementById('transaction-description').value = '';
+                document.getElementById('transaction-amount').value = '';
+
                 document.getElementById('transaction-form').style.display = 'none';
                 document.getElementById('transaction-success-message').style.display = 'block';
 
