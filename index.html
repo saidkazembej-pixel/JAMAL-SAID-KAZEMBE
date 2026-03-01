@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAMAL SAID KAZEMBE MULTISYSTEM MANAGEMENT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f0f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 20px;
+        }
+        .title {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: green;
+        }
+        .sub-title {
+            font-size: 2.5em;
+            color: green;
+        }
+        .button-container {
+            margin-top: 30px;
+        }
+        .button {
+            font-size: 1.5em;
+            padding: 15px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            width: 180px;
+        }
+        .business-button {
+            background-color: #007BFF;
+            color: white;
+        }
+        .exit-button {
+            background-color: #DC3545;
+            color: white;
+        }
+        .view-button {
+            background-color: #003366; /* Dark Blue */
+            color: white;
+        }
+        .add-transaction-button {
+            background-color: #28A745;
+            color: white;
+        }
+        .submit-button {
+            background-color: #6F42C1;
+            color: white;
+            font-size: 1.5em;
+        }
+        .success-button {
+            background-color: #28A745;
+            color: white;
+        }
+        .button:hover {
+            opacity: 0.8;
+        }
+        .transaction-form {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .input-field {
+            font-size: 1.5em;
+            padding: 15px;
+            margin: 15px;
+            width: 350px;
+            border-radius: 10px;
+        }
+        .horizontal-buttons {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 30px;
+        }
+        .horizontal-buttons button {
+            width: 180px;
+            margin: 10px;
+            font-size: 1.5em;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .success-message {
+            font-size: 2em;
+            color: green;
+            margin-top: 30px;
+        }
+        .tick-icon {
+            color: green;
+            font-size: 3em;
+            margin-right: 10px;
+        }
+        .in-button {
+            background-color: pink;
+        }
+        .out-button {
+            background-color: orange;
+        }
+        .cash-button {
+            background-color: yellow;
+        }
+        .credit-button {
+            background-color: green;
+        }
+        .bank-button {
+            background-color: purple;
+        }
+        /* Specific colors for List and Exit buttons */
+        .list-button {
+            background-color: green;
+            color: white;
+        }
+        .exit-button-view {
+            background-color: red;
+            color: white;
+        }
+        .transaction-list {
+            width: 80%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+        .transaction-list th, .transaction-list td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .transaction-list th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">JAMAL SAID KAZEMBE</div>
+    <div class="sub-title">MULTISYSTEM MANAGEMENT</div>
+
+    <div id="initial-buttons" class="button-container">
+        <button class="button business-button" onclick="chooseBusiness()">Business</button>
+        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+    </div>
+
+    <div id="business-buttons" class="button-container" style="display: none;">
+        <button class="button add-transaction-button" onclick="addTransaction()">Add New Transaction</button>
+        <button class="button view-button" onclick="viewTransaction()">View Transactions</button>
+        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+    </div>
+
+    <div id="view-transaction-options" class="transaction-form" style="display: none;">
+        <h2>Choose an Option</h2>
+        <div class="horizontal-buttons">
+            <button class="submit-button list-button" onclick="viewTransactionList()">List</button>
+            <button class="submit-button exit-button-view" onclick="goBackToBusinessMenu()">Exit</button>
+        </div>
+    </div>
+
+    <div id="transaction-description-form" class="transaction-form" style="display: none;">
+        <h2>Enter Description</h2>
+        <input class="input-field" type="text" id="transaction-description" placeholder="Enter Description" />
+        <br>
+        <button class="submit-button" onclick="submitDescription()">Submit Description</button>
+    </div>
+
+    <div id="transaction-amount-form" class="transaction-form" style="display: none;">
+        <h2>Enter Amount</h2>
+        <input class="input-field" type="number" id="transaction-amount" placeholder="Enter Amount" />
+        <br>
+        <button class="submit-button" onclick="submitAmount()">Submit Amount</button>
+    </div>
+
+    <div id="transaction-in-out-form" class="transaction-form" style="display: none;">
+        <h2>Choose Transaction Type</h2>
+        <div class="horizontal-buttons">
+            <button class="submit-button in-button" onclick="submitTransactionType('In')">In</button>
+            <button class="submit-button out-button" onclick="submitTransactionType('Out')">Out</button>
+        </div>
+    </div>
+
+    <div id="transaction-method-form" class="transaction-form" style="display: none;">
+        <h2>Choose Payment Method</h2>
+        <div class="horizontal-buttons">
+            <button class="submit-button cash-button" onclick="submitPaymentMethod('Cash')">Cash</button>
+            <button class="submit-button credit-button" onclick="submitPaymentMethod('Credit')">Credit</button>
+            <button class="submit-button bank-button" onclick="submitPaymentMethod('Bank')">Bank</button>
+        </div>
+    </div>
+
+    <div id="transaction-success-message" class="transaction-form" style="display: none;">
+        <div class="success-message">
+            <span class="tick-icon">✔️</span>Transaction Recorded Successfully!
+        </div>
+    </div>
+
+    <script>
+        var transactions = []; // Placeholder for storing transactions
+
+        function chooseBusiness() {
+            document.getElementById('initial-buttons').style.display = 'none';
+            document.getElementById('business-buttons').style.display = 'block';
+        }
+
+        function addTransaction() {
+            // Clear any previous input
+            document.getElementById('transaction-description').value = '';
+            document.getElementById('transaction-amount').value = '';
+
+            document.getElementById('business-buttons').style.display = 'none';
+            document.getElementById('transaction-description-form').style.display = 'block';
+        }
+
+        function viewTransaction() {
+            document.getElementById('business-buttons').style.display = 'none';
+            document.getElementById('view-transaction-options').style.display = 'block';
+        }
+
+        function viewTransactionList() {
+            // Check if transactions exist
+            if (transactions.length > 0) {
+                let table = "<table class='transaction-list'><tr><th>No</th><th>Date</th><th>Description</th><th>Type</th><th>Amount</th></tr>";
+
+                transactions.forEach((transaction, index) => {
+                    table += `<tr>
+                        <td>${index + 1}</td>
+                        <td>${transaction.date}</td>
+                        <td>${transaction.description}</td>
+                        <td>${transaction.method}</td>
+                        <td>${transaction.amount}</td>
+                    </tr>`;
+                });
+
+                table += "</table>";
+                document.getElementById('view-transaction-options').innerHTML = table;
+            } else {
+                alert("No transactions available.");
+            }
+        }
+
+        function goBackToBusinessMenu() {
+            // Hide the success message when going back to the business menu
+            document.getElementById('transaction-success-message').style.display = 'none';
+            document.getElementById('view-transaction-options').style.display = 'none';
+            document.getElementById('business-buttons').style.display = 'block'; // Return to business menu
+        }
+
+        function submitDescription() {
+            var description = document.getElementById('transaction-description').value;
+
+            if (description) {
+                document.getElementById('transaction-description-form').style.display = 'none';
+                document.getElementById('transaction-amount-form').style.display = 'block';
+            } else {
+                alert("Please enter a description.");
+            }
+        }
+
+        function submitAmount() {
+            var amount = document.getElementById('transaction-amount').value;
+
+            if (amount) {
+                document.getElementById('transaction-amount-form').style.display = 'none';
+                document.getElementById('transaction-in-out-form').style.display = 'block';
+            } else {
+                alert("Please enter an amount.");
+            }
+        }
+
+        function submitTransactionType(type) {
+            var description = document.getElementById('transaction-description').value;
+            var amount = document.getElementById('transaction-amount').value;
+
+            // Store the transaction details along with the current date
+            transactions.push({
+                description: description,
+                amount: amount,
+                type: type,
+                date: new Date().toLocaleString(), // Add date
+                method: ''
+            });
+
+            // Now show the method selection
+            document.getElementById('transaction-in-out-form').style.display = 'none';
+            document.getElementById('transaction-method-form').style.display = 'block';
+        }
+
+        function submitPaymentMethod(method) {
+            var description = document.getElementById('transaction-description').value;
+            var amount = document.getElementById('transaction-amount').value;
+
+            // Update the method of the transaction
+            transactions[transactions.length - 1].method = method;
+
+            // Show success message only after the transaction is completely recorded
+            document.getElementById('transaction-method-form').style.display = 'none';
+            document.getElementById('transaction-success-message').style.display = 'block';
+
+            // Clear the input fields after the transaction is complete
+            document.getElementById('transaction-description').value = '';
+            document.getElementById('transaction-amount').value = '';
+
+            // Wait 1 second before returning to the business menu
+            setTimeout(function() {
+                goBackToBusinessMenu();
+            }, 1000); // 1-second delay
+        }
+
+        function exitProgram() {
+            alert("Exiting...");
+            window.close(); // Closes the window (works in most browsers)
+        }
+    </script>
+</body>
+</html>
