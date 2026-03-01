@@ -25,6 +25,17 @@
             font-size: 2.5em;
             color: green;
         }
+        .timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            color: #000;
+            background-color: #ffeb3b;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
         .button-container {
             margin-top: 30px;
         }
@@ -130,18 +141,19 @@
     </style>
 </head>
 <body>
+    <div class="timer" id="timer">Time Remaining: 03:00</div>
     <div class="title">JAMAL SAID KAZEMBE</div>
     <div class="sub-title">MULTISYSTEM MANAGEMENT</div>
 
     <div id="initial-buttons" class="button-container">
         <button class="button business-button" onclick="chooseBusiness()">Business</button>
-        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+        <button class="button exit-button" onclick="exitProgram('initial')">Exit</button>
     </div>
 
     <div id="business-buttons" class="button-container" style="display: none;">
         <button class="button add-transaction-button" onclick="addTransaction()">Add New Transaction</button>
         <button class="button view-button" onclick="viewTransaction()">View Transactions</button>
-        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+        <button class="button exit-button" onclick="exitProgram('business')">Exit</button>
     </div>
 
     <div id="transaction-form" class="transaction-form" style="display: none;">
@@ -158,7 +170,7 @@
             <button class="button submit-button" onclick="choosePaymentMethod('Credit')">Credit</button>
             <button class="button submit-button" onclick="choosePaymentMethod('Bank')">Bank</button>
         </div>
-        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+        <button class="button exit-button" onclick="exitProgram('transaction')">Exit</button>
     </div>
 
     <div id="view-transaction-options" class="transaction-form" style="display: none;">
@@ -166,7 +178,7 @@
         <div class="horizontal-buttons">
             <button class="submit-button list-button" onclick="viewTransactionList()">List</button>
             <button class="submit-button cashbook-button" onclick="viewCashBook()">CASH BOOK (CB)</button>
-            <button class="submit-button exit-button" onclick="exitProgram()">Exit</button>
+            <button class="submit-button exit-button" onclick="exitProgram('view')">Exit</button>
         </div>
     </div>
 
@@ -188,7 +200,7 @@
                 <th>Method</th>
             </tr>
         </table>
-        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+        <button class="button exit-button" onclick="exitProgram('list')">Exit</button>
     </div>
 
     <div id="cash-book" class="transaction-form" style="display: none;">
@@ -217,7 +229,7 @@
                 </table>
             </div>
         </div>
-        <button class="button exit-button" onclick="exitProgram()">Exit</button>
+        <button class="button exit-button" onclick="exitProgram('cashbook')">Exit</button>
     </div>
 
     <script>
@@ -226,6 +238,26 @@
         var transactionMethod = '';
         var transactionType = '';
         var drTotal = 0, crTotal = 0;
+        var countdownTime = 180; // 3 minutes in seconds
+
+        function updateTimer() {
+            var minutes = Math.floor(countdownTime / 60);
+            var seconds = countdownTime % 60;
+            document.getElementById('timer').innerText = `Time Remaining: ${pad(minutes)}:${pad(seconds)}`;
+
+            if (countdownTime > 0) {
+                countdownTime--;
+            } else {
+                clearInterval(timerInterval);
+                alert('Time is up!');
+            }
+        }
+
+        function pad(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        var timerInterval = setInterval(updateTimer, 1000); // Update timer every second
 
         function chooseBusiness() {
             document.getElementById('initial-buttons').style.display = 'none';
@@ -350,24 +382,23 @@
             }
         }
 
-        function exitProgram() {
-            const currentMenu = document.querySelector('div[style="display: block;"]');
-            if (currentMenu.id === "business-buttons") {
+        function exitProgram(currentMenu) {
+            if (currentMenu === 'initial') {
+                document.getElementById('initial-buttons').style.display = 'none';
+                document.getElementById('business-buttons').style.display = 'block';
+            } else if (currentMenu === 'business') {
                 document.getElementById('business-buttons').style.display = 'none';
                 document.getElementById('initial-buttons').style.display = 'block';
-            } else if (currentMenu.id === "transaction-form") {
+            } else if (currentMenu === 'transaction') {
                 document.getElementById('transaction-form').style.display = 'none';
                 document.getElementById('business-buttons').style.display = 'block';
-            } else if (currentMenu.id === "view-transaction-options") {
+            } else if (currentMenu === 'view') {
                 document.getElementById('view-transaction-options').style.display = 'none';
                 document.getElementById('business-buttons').style.display = 'block';
-            } else if (currentMenu.id === "transaction-success-message") {
-                document.getElementById('transaction-success-message').style.display = 'none';
-                document.getElementById('business-buttons').style.display = 'block';
-            } else if (currentMenu.id === "transaction-list") {
+            } else if (currentMenu === 'list') {
                 document.getElementById('transaction-list').style.display = 'none';
                 document.getElementById('view-transaction-options').style.display = 'block';
-            } else if (currentMenu.id === "cash-book") {
+            } else if (currentMenu === 'cashbook') {
                 document.getElementById('cash-book').style.display = 'none';
                 document.getElementById('view-transaction-options').style.display = 'block';
             }
